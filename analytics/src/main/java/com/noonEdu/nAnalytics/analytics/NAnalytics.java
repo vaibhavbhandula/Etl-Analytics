@@ -23,20 +23,23 @@ public class NAnalytics {
 
     private int userId = 0;
 
-    private NAnalytics(int userId) {
-        this.userId = userId;
+    public static void initialize(Context context) {
+        contextWeakReference = new WeakReference<>(context);
     }
 
-    public static NAnalytics getInstance(Context context, int userId) {
-        contextWeakReference = new WeakReference<>(context);
+    public static NAnalytics getInstance() {
         if (nAnalytics == null) {
-            nAnalytics = new NAnalytics(userId);
+            nAnalytics = new NAnalytics();
         }
         return nAnalytics;
     }
 
     private Context getContext() {
         return contextWeakReference.get();
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public void logEvent(String event, HashMap<String, Object> map) {
@@ -54,7 +57,7 @@ public class NAnalytics {
             @Override public void run() {
                 List<Event> events = EventDatabase.
                         getInstance(getContext())
-                        .getRepoDao()
+                        .getEventDao()
                         .getAllEvents();
                 if (events.isEmpty()) {
                     //empty db directly make api call

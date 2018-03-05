@@ -32,5 +32,5 @@ public abstract class EventDatabase extends RoomDatabase {
                 DB_NAME).build();
     }
 
-    public abstract EventDao getRepoDao();
+    public abstract EventDao getEventDao();
 }
