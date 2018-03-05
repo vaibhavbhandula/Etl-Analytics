@@ -9,7 +9,7 @@ import android.arch.persistence.room.Update;
 
 import com.noonEdu.nAnalytics.data.Event;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Vaibhav Bhandula on 05/03/18.
@@ -18,7 +18,7 @@ import java.util.ArrayList;
 @Dao
 public interface EventDao {
 
-    @Query("Select * from event") ArrayList<Event> getAllEvents();
+    @Query("Select * from event") List<Event> getAllEvents();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE) void insert(Event... events);
 

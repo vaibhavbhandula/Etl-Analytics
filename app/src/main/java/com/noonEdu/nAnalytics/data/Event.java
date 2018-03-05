@@ -18,4 +18,16 @@ public class Event {
     public Event(@NonNull String eventString) {
         this.eventString = eventString;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    @NonNull public String getEventString() {
+        return eventString;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 }

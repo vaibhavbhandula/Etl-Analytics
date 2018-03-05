@@ -7,8 +7,8 @@ import com.noonEdu.nAnalytics.data.Event;
 import com.noonEdu.nAnalytics.db.EventDatabase;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * @author Vaibhav Bhandula on 05/03/18.
@@ -52,7 +52,7 @@ public class NAnalytics {
     private void sendEventToServer(HashMap<String, Object> map) {
         new Handler().post(new Runnable() {
             @Override public void run() {
-                ArrayList<Event> events = EventDatabase.
+                List<Event> events = EventDatabase.
                         getInstance(getContext())
                         .getRepoDao()
                         .getAllEvents();
