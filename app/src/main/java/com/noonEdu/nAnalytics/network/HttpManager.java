@@ -10,7 +10,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 /**
- * @author Vaibhav Bhandula on 18/11/16.
+ * @author Vaibhav Bhandula on 05/03/18.
  */
 public class HttpManager {
 
