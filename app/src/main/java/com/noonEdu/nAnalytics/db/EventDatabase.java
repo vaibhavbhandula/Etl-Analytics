@@ -18,7 +18,7 @@ public abstract class EventDatabase extends RoomDatabase {
     private static final String DB_NAME = "eventDatabase.db";
     private static volatile EventDatabase instance;
 
-    static synchronized EventDatabase getInstance(Context context) {
+    public static synchronized EventDatabase getInstance(Context context) {
         if (instance == null) {
             instance = create(context);
         }
