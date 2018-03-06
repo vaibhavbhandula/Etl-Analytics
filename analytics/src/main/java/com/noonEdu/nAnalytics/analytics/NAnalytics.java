@@ -63,8 +63,8 @@ public class NAnalytics {
                     //empty db directly make api call
                     //if success do nothing, if fail add map to db.
                 } else {
-                    //convert all element in list to hash map and make api call.
-                    //if success clear db else just add new map to db.
+                    //delete all from db add new map to list and make api call
+                    //if success do nothing else just add all back to db.
                 }
             }
         });
