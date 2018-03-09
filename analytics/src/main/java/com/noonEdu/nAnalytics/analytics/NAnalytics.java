@@ -1,12 +1,14 @@
 package com.noonEdu.nAnalytics.analytics;
 
 import android.content.Context;
-import android.os.Handler;
 
+import com.noonEdu.nAnalytics.commons.LogUtils;
+import com.noonEdu.nAnalytics.commons.Utils;
 import com.noonEdu.nAnalytics.data.Event;
 import com.noonEdu.nAnalytics.db.EventDatabase;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -52,21 +54,63 @@ public class NAnalytics {
         sendEventToServer(map);
     }
 
-    private void sendEventToServer(HashMap<String, Object> map) {
-        new Handler().post(new Runnable() {
-            @Override public void run() {
-                List<Event> events = EventDatabase.
-                        getInstance(getContext())
-                        .getEventDao()
-                        .getAllEvents();
-                if (events.isEmpty()) {
-                    //empty db directly make api call
-                    //if success do nothing, if fail add map to db.
-                } else {
-                    //delete all from db add new map to list and make api call
-                    //if success do nothing else just add all back to db.
-                }
+    private void sendEventToServer(final HashMap<String, Object> map) {
+        LogUtils.printLog(TAG, "sendEventToServer");
+        EventDatabase eventDatabase = EventDatabase.getInstance(getContext());
+        List<Event> events = eventDatabase.getEventDao().getAllEvents();
+        if (events.isEmpty()) {
+            //empty db directly make api call
+            //if success do nothing, if fail add map to db.
+            //testing
+            if (true) {
+                apiFailDbEmpty(map);
             }
-        });
+        } else {
+            //delete all from db add new map to list and make api call
+            //if success do nothing else just add all back to db.
+            //testing
+            eventDatabase.getEventDao().deleteAll();
+
+            if (true) {
+                events.add(new Event(Utils.mapToString(map)));
+                apiFailDbNotEmpty(getEventsMapList(events));
+            }
+        }
+    }
+
+    private void apiFailDbEmpty(HashMap<String, Object> map) {
+        if (map == null) {
+            return;
+        }
+        EventDatabase.getInstance(getContext())
+                .getEventDao()
+                .insert(new Event(Utils.mapToString(map)));
+        LogUtils.printLog(TAG, "apiFailDbEmpty");
+    }
+
+    private void apiFailDbNotEmpty(List<HashMap<String, Object>> maps) {
+        if (maps == null || maps.isEmpty()) {
+            return;
+        }
+        Event[] events = new Event[maps.size()];
+        for (int i = 0; i < maps.size(); i++) {
+            HashMap<String, Object> map = maps.get(i);
+            events[i] = new Event(Utils.mapToString(map));
+        }
+        EventDatabase.getInstance(getContext())
+                .getEventDao()
+                .insert(events);
+        LogUtils.printLog(TAG, "apiFailDbNotEmpty");
+    }
+
+    private List<HashMap<String, Object>> getEventsMapList(List<Event> events) {
+        List<HashMap<String, Object>> list = new ArrayList<>();
+        if (events == null || events.isEmpty()) {
+            return list;
+        }
+        for (Event event : events) {
+            list.add(Utils.stringToMap(event.getEventString()));
+        }
+        return list;
     }
 }
