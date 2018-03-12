@@ -31,7 +31,6 @@ public class AnalyticsTest {
     public void setUp() {
         context = InstrumentationRegistry.getContext();
         NAnalytics.initialize(context, "", "", true);
-        NAnalytics.getInstance().setUserId(1);
         EventDatabase.getInstance(context)
                 .getEventDao()
                 .deleteAll();

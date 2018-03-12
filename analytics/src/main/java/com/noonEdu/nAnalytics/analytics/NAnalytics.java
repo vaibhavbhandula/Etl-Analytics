@@ -30,8 +30,6 @@ public class NAnalytics {
     private static NAnalytics nAnalytics;
     private static WeakReference<Context> contextWeakReference;
 
-    private int userId = 0;
-
     public static void initialize(Context context, String baseDebugUrl, String baseUrl, boolean isTestUrl) {
         contextWeakReference = new WeakReference<>(context);
         ApiClient.initialize(baseDebugUrl, baseUrl, isTestUrl);
@@ -48,17 +46,10 @@ public class NAnalytics {
         return contextWeakReference.get();
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
     public void logEvent(String event, HashMap<String, Object> map) throws UrlEmptyException {
         if (map == null) {
             return;
         }
-        map.put("eventType", event);
-        map.put("source", "Android");
-        map.put("userID", userId);
         sendEventToServer(map);
     }
 
@@ -66,9 +57,6 @@ public class NAnalytics {
         if (map == null) {
             return;
         }
-        map.put("eventType", event);
-        map.put("source", "Android");
-        map.put("userID", userId);
         sendTestEventToServer(map);
     }
 
