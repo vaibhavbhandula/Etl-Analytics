@@ -46,14 +46,14 @@ public class NAnalytics {
         return contextWeakReference.get();
     }
 
-    public void logEvent(String event, HashMap<String, Object> map) throws UrlEmptyException {
+    public void logEvent(HashMap<String, Object> map) throws UrlEmptyException {
         if (map == null) {
             return;
         }
         sendEventToServer(map);
     }
 
-    public void logTestEvent(String event, HashMap<String, Object> map) {
+    public void logTestEvent(HashMap<String, Object> map) {
         if (map == null) {
             return;
         }

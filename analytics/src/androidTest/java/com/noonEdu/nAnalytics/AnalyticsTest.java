@@ -48,7 +48,7 @@ public class AnalyticsTest {
         map.put("value", 2);
         map.put("test-value", "testing");
         NAnalytics nAnalytics = NAnalytics.getInstance();
-        nAnalytics.logTestEvent("test", map);
+        nAnalytics.logTestEvent(map);
         List<Event> afterEvents = EventDatabase.getInstance(context)
                 .getEventDao()
                 .getAllEvents();
@@ -62,7 +62,7 @@ public class AnalyticsTest {
         map.put("value", 2);
         map.put("test-value", "testing");
         NAnalytics nAnalytics = NAnalytics.getInstance();
-        nAnalytics.logTestEvent("test", map);
+        nAnalytics.logTestEvent(map);
         List<Event> events = EventDatabase.getInstance(context)
                 .getEventDao()
                 .getAllEvents();
