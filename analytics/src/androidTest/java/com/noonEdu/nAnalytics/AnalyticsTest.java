@@ -30,7 +30,7 @@ public class AnalyticsTest {
     @Before
     public void setUp() {
         context = InstrumentationRegistry.getContext();
-        NAnalytics.initialize(context);
+        NAnalytics.initialize(context, "", "", true);
         NAnalytics.getInstance().setUserId(1);
         EventDatabase.getInstance(context)
                 .getEventDao()

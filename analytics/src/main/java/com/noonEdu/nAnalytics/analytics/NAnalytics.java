@@ -6,6 +6,7 @@ import com.noonEdu.nAnalytics.commons.LogUtils;
 import com.noonEdu.nAnalytics.commons.Utils;
 import com.noonEdu.nAnalytics.data.Event;
 import com.noonEdu.nAnalytics.db.EventDatabase;
+import com.noonEdu.nAnalytics.network.ApiClient;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -25,8 +26,9 @@ public class NAnalytics {
 
     private int userId = 0;
 
-    public static void initialize(Context context) {
+    public static void initialize(Context context, String baseDebugUrl, String baseUrl, boolean isTestUrl) {
         contextWeakReference = new WeakReference<>(context);
+        ApiClient.initialize(baseDebugUrl, baseUrl, isTestUrl);
     }
 
     public static NAnalytics getInstance() {
