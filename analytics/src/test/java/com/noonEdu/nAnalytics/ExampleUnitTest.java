@@ -1,8 +1,6 @@
 package com.noonEdu.nAnalytics;
 
 import com.noonEdu.nAnalytics.commons.Utils;
-import com.noonEdu.nAnalytics.exception.UrlEmptyException;
-import com.noonEdu.nAnalytics.network.ApiClient;
 
 import org.junit.Test;
 
@@ -31,10 +29,5 @@ public class ExampleUnitTest {
         System.out.println(str);
         HashMap<String, Object> hashMap = Utils.stringToMap(str);
         System.out.println(hashMap.toString());
-    }
-
-    @Test(expected = UrlEmptyException.class)
-    public void emptyUrlTest() throws Exception {
-        ApiClient.getClient();
     }
 }

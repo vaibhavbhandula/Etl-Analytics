@@ -28,9 +28,9 @@ public class AnalyticsTest {
     private Context context;
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         context = InstrumentationRegistry.getContext();
-        NAnalytics.initialize(context, "", "", true);
+        NAnalytics.initialize(context, "test_url", NAnalytics.RequestType.POST);
         EventDatabase.getInstance(context)
                 .getEventDao()
                 .deleteAll();
@@ -48,7 +48,7 @@ public class AnalyticsTest {
         map.put("value", 2);
         map.put("test-value", "testing");
         NAnalytics nAnalytics = NAnalytics.getInstance();
-        nAnalytics.logTestEvent(map);
+        nAnalytics.logTestEvent(Utils.mapToString(map));
         List<Event> afterEvents = EventDatabase.getInstance(context)
                 .getEventDao()
                 .getAllEvents();
@@ -62,7 +62,7 @@ public class AnalyticsTest {
         map.put("value", 2);
         map.put("test-value", "testing");
         NAnalytics nAnalytics = NAnalytics.getInstance();
-        nAnalytics.logTestEvent(map);
+        nAnalytics.logTestEvent(Utils.mapToString(map));
         List<Event> events = EventDatabase.getInstance(context)
                 .getEventDao()
                 .getAllEvents();

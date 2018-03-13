@@ -1,20 +1,25 @@
 package com.noonEdu.nAnalytics.analytics;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.noonEdu.nAnalytics.commons.LogUtils;
-import com.noonEdu.nAnalytics.commons.Utils;
 import com.noonEdu.nAnalytics.data.Event;
 import com.noonEdu.nAnalytics.db.EventDatabase;
 import com.noonEdu.nAnalytics.exception.UrlEmptyException;
+import com.noonEdu.nAnalytics.exception.WrongRequestMethodException;
 import com.noonEdu.nAnalytics.network.ApiClient;
 import com.noonEdu.nAnalytics.network.ApiInterface;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -27,12 +32,24 @@ public class NAnalytics {
 
     private static final String TAG = NAnalytics.class.getSimpleName();
 
+    public enum RequestType {
+        POST,
+        PUT
+    }
+
     private static NAnalytics nAnalytics;
     private static WeakReference<Context> contextWeakReference;
 
-    public static void initialize(Context context, String baseDebugUrl, String baseUrl, boolean isTestUrl) {
+    private static RequestType type;
+    private static String url = "";
+
+    public static void initialize(Context context, String url, RequestType type) throws UrlEmptyException {
+        if (TextUtils.isEmpty(url)) {
+            throw new UrlEmptyException("Url Empty!");
+        }
         contextWeakReference = new WeakReference<>(context);
-        ApiClient.initialize(baseDebugUrl, baseUrl, isTestUrl);
+        NAnalytics.type = type;
+        NAnalytics.url = url;
     }
 
     public static NAnalytics getInstance() {
@@ -46,61 +63,49 @@ public class NAnalytics {
         return contextWeakReference.get();
     }
 
-    public void logEvent(HashMap<String, Object> map) throws UrlEmptyException {
-        if (map == null) {
+    public void logEvent(String key, String jsonData) throws WrongRequestMethodException, JSONException {
+        if (key == null || key.isEmpty() || jsonData == null || jsonData.isEmpty()) {
             return;
         }
-        sendEventToServer(map);
+        sendEventToServer(key, jsonData);
     }
 
-    public void logTestEvent(HashMap<String, Object> map) {
-        if (map == null) {
+    public void logTestEvent(String event) {
+        if (event == null || event.isEmpty()) {
             return;
         }
-        sendTestEventToServer(map);
+        sendTestEventToServer(event);
     }
 
-    private void sendEventToServer(final HashMap<String, Object> map) throws UrlEmptyException {
-        LogUtils.printLog(TAG, "sendTestEventToServer");
+    private void sendEventToServer(String key, String jsonData) throws WrongRequestMethodException, JSONException {
+        LogUtils.printLog(TAG, "sendEventToServer");
         EventDatabase eventDatabase = EventDatabase.getInstance(getContext());
         final List<Event> events = eventDatabase.getEventDao().getAllEvents();
-        ApiInterface apiInterface = ApiClient.getClient().create(ApiInterface.class);
         if (events.isEmpty()) {
             //empty db directly make api call
             //if success do nothing, if fail add map to db.
-            Call<Void> call = apiInterface.sendEvent();
-            call.enqueue(new Callback<Void>() {
-                @Override public void onResponse(Call<Void> call, Response<Void> response) {
-                    if (!ApiClient.isResponseOk(response.code())) {
-                        onFailure(call, new Throwable());
-                    }
-                }
-
-                @Override public void onFailure(Call<Void> call, Throwable t) {
-                    apiFailDbEmpty(map);
-                }
-            });
+            if (type == RequestType.POST) {
+                sendPostCallDbEmpty(key, jsonData);
+            } else if (type == RequestType.PUT) {
+                sendPutCallDbEmpty(key, jsonData);
+            } else {
+                throw new WrongRequestMethodException("Wrong Request Method!");
+            }
         } else {
             //delete all from db add new map to list and make api call
             //if success do nothing else just add all back to db.
             eventDatabase.getEventDao().deleteAll();
-            Call<Void> call = apiInterface.sendEvent();
-            call.enqueue(new Callback<Void>() {
-                @Override public void onResponse(Call<Void> call, Response<Void> response) {
-                    if (!ApiClient.isResponseOk(response.code())) {
-                        onFailure(call, new Throwable());
-                    }
-                }
-
-                @Override public void onFailure(Call<Void> call, Throwable t) {
-                    events.add(new Event(Utils.mapToString(map)));
-                    apiFailDbNotEmpty(getEventsMapList(events));
-                }
-            });
+            if (type == RequestType.POST) {
+                sendPostCallDbNotEmpty(key, jsonData, events);
+            } else if (type == RequestType.PUT) {
+                sendPutCallDbNotEmpty(key, jsonData, events);
+            } else {
+                throw new WrongRequestMethodException("Wrong Request Method!");
+            }
         }
     }
 
-    private void sendTestEventToServer(final HashMap<String, Object> map) {
+    private void sendTestEventToServer(String jsonData) {
         LogUtils.printLog(TAG, "sendTestEventToServer");
         EventDatabase eventDatabase = EventDatabase.getInstance(getContext());
         List<Event> events = eventDatabase.getEventDao().getAllEvents();
@@ -109,7 +114,7 @@ public class NAnalytics {
             //if success do nothing, if fail add map to db.
             //testing
             if (true) {
-                apiFailDbEmpty(map);
+                apiFailDbEmpty(jsonData);
             }
         } else {
             //delete all from db add new map to list and make api call
@@ -118,45 +123,139 @@ public class NAnalytics {
             eventDatabase.getEventDao().deleteAll();
 
             if (true) {
-                events.add(new Event(Utils.mapToString(map)));
-                apiFailDbNotEmpty(getEventsMapList(events));
+                events.add(new Event(jsonData));
+                apiFailDbNotEmpty(events);
             }
         }
     }
 
-    private void apiFailDbEmpty(HashMap<String, Object> map) {
-        if (map == null) {
+    private void sendPostCallDbEmpty(String key, final String jsonData) throws JSONException {
+        JSONArray array = new JSONArray();
+        array.put(jsonData);
+        JSONObject object = new JSONObject();
+        object.put(key, array);
+        RequestBody body = RequestBody.create(MediaType.parse("application/json"), object.toString());
+        ApiInterface apiInterface = ApiClient.getClient().create(ApiInterface.class);
+        Call<Void> call = apiInterface.sendPostEvent(url, body);
+        call.enqueue(new Callback<Void>() {
+            @Override public void onResponse(Call<Void> call, Response<Void> response) {
+                if (!ApiClient.isResponseOk(response.code())) {
+                    onFailure(call, new Throwable());
+                } else {
+                    LogUtils.printLog(TAG, "post api success db empty");
+                }
+            }
+
+            @Override public void onFailure(Call<Void> call, Throwable t) {
+                LogUtils.printLog(TAG, "post api fail db empty");
+                apiFailDbEmpty(jsonData);
+            }
+        });
+    }
+
+    private void sendPostCallDbNotEmpty(String key, final String jsonData, final List<Event> events)
+            throws JSONException {
+        JSONArray array = new JSONArray();
+        for (Event event : events) {
+            array.put(event.getEventString());
+        }
+        array.put(jsonData);
+        JSONObject object = new JSONObject();
+        object.put(key, array);
+        RequestBody body = RequestBody.create(MediaType.parse("application/json"), object.toString());
+        ApiInterface apiInterface = ApiClient.getClient().create(ApiInterface.class);
+        Call<Void> call = apiInterface.sendPostEvent(url, body);
+        call.enqueue(new Callback<Void>() {
+            @Override public void onResponse(Call<Void> call, Response<Void> response) {
+                if (!ApiClient.isResponseOk(response.code())) {
+                    onFailure(call, new Throwable());
+                } else {
+                    LogUtils.printLog(TAG, "post api success db not empty");
+                }
+            }
+
+            @Override public void onFailure(Call<Void> call, Throwable t) {
+                LogUtils.printLog(TAG, "post api fail db not empty");
+                events.add(new Event(jsonData));
+                apiFailDbNotEmpty(events);
+            }
+        });
+    }
+
+    private void sendPutCallDbEmpty(String key, final String jsonData) throws JSONException {
+        JSONArray array = new JSONArray();
+        array.put(jsonData);
+        JSONObject object = new JSONObject();
+        object.put(key, array);
+        RequestBody body = RequestBody.create(MediaType.parse("application/json"), object.toString());
+        ApiInterface apiInterface = ApiClient.getClient().create(ApiInterface.class);
+        Call<Void> call = apiInterface.sendPutEvent(url, body);
+        call.enqueue(new Callback<Void>() {
+            @Override public void onResponse(Call<Void> call, Response<Void> response) {
+                if (!ApiClient.isResponseOk(response.code())) {
+                    onFailure(call, new Throwable());
+                } else {
+                    LogUtils.printLog(TAG, "put api success db empty");
+                }
+            }
+
+            @Override public void onFailure(Call<Void> call, Throwable t) {
+                LogUtils.printLog(TAG, "put api fail db empty");
+                apiFailDbEmpty(jsonData);
+            }
+        });
+    }
+
+    private void sendPutCallDbNotEmpty(String key, final String jsonData, final List<Event> events)
+            throws JSONException {
+        JSONArray array = new JSONArray();
+        for (Event event : events) {
+            array.put(event.getEventString());
+        }
+        array.put(jsonData);
+        JSONObject object = new JSONObject();
+        object.put(key, array);
+        RequestBody body = RequestBody.create(MediaType.parse("application/json"), object.toString());
+        ApiInterface apiInterface = ApiClient.getClient().create(ApiInterface.class);
+        Call<Void> call = apiInterface.sendPutEvent(url, body);
+        call.enqueue(new Callback<Void>() {
+            @Override public void onResponse(Call<Void> call, Response<Void> response) {
+                if (!ApiClient.isResponseOk(response.code())) {
+                    onFailure(call, new Throwable());
+                } else {
+                    LogUtils.printLog(TAG, "put api success db not empty");
+                }
+            }
+
+            @Override public void onFailure(Call<Void> call, Throwable t) {
+                LogUtils.printLog(TAG, "put api fail db not empty");
+                events.add(new Event(jsonData));
+                apiFailDbNotEmpty(events);
+            }
+        });
+    }
+
+    private void apiFailDbEmpty(String event) {
+        if (event == null || event.isEmpty()) {
             return;
         }
         EventDatabase.getInstance(getContext())
                 .getEventDao()
-                .insert(new Event(Utils.mapToString(map)));
+                .insert(new Event(event));
         LogUtils.printLog(TAG, "apiFailDbEmpty");
     }
 
-    private void apiFailDbNotEmpty(List<HashMap<String, Object>> maps) {
-        if (maps == null || maps.isEmpty()) {
+    private void apiFailDbNotEmpty(List<Event> eventList) {
+        if (eventList == null || eventList.isEmpty()) {
             return;
         }
-        Event[] events = new Event[maps.size()];
-        for (int i = 0; i < maps.size(); i++) {
-            HashMap<String, Object> map = maps.get(i);
-            events[i] = new Event(Utils.mapToString(map));
+        Event[] events = new Event[eventList.size()];
+        for (int i = 0; i < eventList.size(); i++) {
+            events[i] = eventList.get(i);
         }
         EventDatabase.getInstance(getContext())
                 .getEventDao()
                 .insert(events);
         LogUtils.printLog(TAG, "apiFailDbNotEmpty");
-    }
-
-    private List<HashMap<String, Object>> getEventsMapList(List<Event> events) {
-        List<HashMap<String, Object>> list = new ArrayList<>();
-        if (events == null || events.isEmpty()) {
-            return list;
-        }
-        for (Event event : events) {
-            list.add(Utils.stringToMap(event.getEventString()));
-        }
-        return list;
     }
 }
