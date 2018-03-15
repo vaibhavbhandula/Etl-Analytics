@@ -29,15 +29,15 @@ public class AnalyticsApiTest {
     @Before
     public void setUp() throws Exception {
         context = InstrumentationRegistry.getContext();
-        NAnalytics.initialize(context, "https://b6klqs39s8.execute-api.us-east-2.amazonaws.com/v1/streams/user-behaviour/records",
-                NAnalytics.RequestType.PUT);
+        NAnalytics.initialize(context, "https://hyyhuwu318.execute-api.us-east-2.amazonaws.com/v1/event",
+                NAnalytics.RequestType.POST);
         EventDatabase.getInstance(context)
                 .getEventDao()
                 .deleteAll();
     }
 
     @Test
-    public void eventTest() throws Exception {
+    public void eventTestDbNotEmpty() throws Exception {
         insertEvent();
         insertEvent();
         insertEvent();
@@ -46,10 +46,18 @@ public class AnalyticsApiTest {
         dataObject.put("user_id", 2);
         dataObject.put("flashcard_image_id", 13);
         dataObject.put("event", "FlashCardOut");
-        JSONObject object = new JSONObject();
-        object.put("data", dataObject);
-        object.put("partition_key", "test_pk");
-        analytics.logEvent("records", object.toString());
+        analytics.logEvent("records", dataObject.toString());
+        Thread.sleep(2000);
+    }
+
+    @Test
+    public void eventTestDbEmpty() throws Exception {
+        NAnalytics analytics = NAnalytics.getInstance();
+        JSONObject dataObject = new JSONObject();
+        dataObject.put("user_id", 2);
+        dataObject.put("flashcard_image_id", 13);
+        dataObject.put("event", "FlashCardOut");
+        analytics.logEvent("records", dataObject.toString());
         Thread.sleep(2000);
     }
 
