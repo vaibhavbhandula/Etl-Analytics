@@ -75,8 +75,10 @@ lint.xml
 *.iml
 
 #release folder
-/app/release/
+/analytics/release/
 
+#schema folder
+/analytics/schemas/
 # OS-specific files
 .DS_Store
 .DS_Store?

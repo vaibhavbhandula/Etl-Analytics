@@ -1,40 +1,37 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion rootProject.ext.compileSdkVersion
     defaultConfig {
-        minSdkVersion 17
-        targetSdkVersion 27
-        versionCode 1
-        versionName "1.0"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode rootProject.ext.versionCode
+        versionName rootProject.ext.versionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
     }
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-analytics.txt'
+            consumerProguardFiles 'proguard-analytics.txt'
         }
     }
 }
 
-ext {
-    //App Dependencies
-    junitVersion = '4.12'
-    appcompatVersion = '27.1.0'
-    retrofitVersion = '2.3.0'
-    roomVersion = '1.0.0'
-    testRunnerVersion = '1.0.1'
-}
-
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile "junit:junit:$junitVersion"
-    compile "com.android.support:appcompat-v7:$appcompatVersion"
-    compile "com.squareup.retrofit2:retrofit:$retrofitVersion"
-    compile "com.squareup.retrofit2:converter-gson:$retrofitVersion"
+    testCompile "junit:junit:${rootProject.ext.junitVersion}"
+    compile "com.android.support:appcompat-v7:${rootProject.ext.appcompatVersion}"
+    compile "com.squareup.retrofit2:retrofit:${rootProject.ext.retrofitVersion}"
+    compile "com.squareup.retrofit2:converter-gson:${rootProject.ext.retrofitVersion}"
     //room
-    implementation "android.arch.persistence.room:runtime:$roomVersion"
-    annotationProcessor "android.arch.persistence.room:compiler:$roomVersion"
+    implementation "android.arch.persistence.room:runtime:${rootProject.ext.roomVersion}"
+    annotationProcessor "android.arch.persistence.room:compiler:${rootProject.ext.roomVersion}"
     //test
-    androidTestCompile "com.android.support.test:runner:$testRunnerVersion"
+    androidTestCompile "com.android.support.test:runner:${rootProject.ext.testRunnerVersion}"
 }

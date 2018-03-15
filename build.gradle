@@ -22,6 +22,20 @@ allprojects {
     }
 }
 
+ext {
+    //App Dependencies
+    junitVersion = '4.12'
+    appcompatVersion = '27.1.0'
+    retrofitVersion = '2.3.0'
+    roomVersion = '1.0.0'
+    testRunnerVersion = '1.0.1'
+    compileSdkVersion = 27
+    minSdkVersion = 17
+    targetSdkVersion = 27
+    versionCode = 1
+    versionName = '1.0'
+}
+
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
