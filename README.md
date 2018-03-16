@@ -1,7 +1,7 @@
 
 Etl-Android
 =========
-Data Capturing Library for Android
+Data Capturing Library for Android.
 This can be helpful in sending real time events. This Library send a JSON Array against a key defined by the user in the Api Body.
 
 Download
