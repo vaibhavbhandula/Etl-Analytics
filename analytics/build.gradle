@@ -7,14 +7,14 @@ def devNameExt = projects.properties['developer.name']
 def devEmailExt = projects.properties['developer.email']
 
 ext {
-    bintrayRepo = 'Etl-Analytics'
-    bintrayName = 'analytics'
+    bintrayRepo = 'Maven'
+    bintrayName = 'Etl-Analytics'
 
     publishedGroupId = 'com.noonEdu.nAnalytics'
     libraryName = 'analytics'
     artifact = 'analytics'
 
-    libraryDescription = 'A Library to post ETL Events for Android'
+    libraryDescription = 'Data Capturing Library for Android'
 
     siteUrl = siteUrlExt
     gitUrl = gitUrlExt
