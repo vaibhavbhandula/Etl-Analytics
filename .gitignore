@@ -1,6 +1,6 @@
 *.iml
 .gradle
-/local.properties
+local.properties
 /.idea/workspace.xml
 /.idea/libraries
 .DS_Store
@@ -10,7 +10,7 @@
 
 *.iml
 .gradle
-/local.properties
+local.properties
 /.idea/workspace.xml
 /.idea/misc.xml
 /.idea/libraries
@@ -24,7 +24,7 @@
 *.bak
 
 .gradle
-/local.properties
+local.properties
 /.idea/workspace.xml
 /.idea/libraries
 /.idea/
