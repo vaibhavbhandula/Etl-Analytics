@@ -16,7 +16,6 @@ Maven:
 	<type>pom</type>
 </dependency>
 ```
-
 or Gradle:
 ```groovy
 implementation 'com.noonEdu.nAnalytics:analytics:1.0.0'
