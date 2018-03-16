@@ -1,11 +1,11 @@
 
 Etl-Android
-=========
+===========
 Data Capturing Library for Android.
 This can be helpful in sending real time events. This Library send a JSON Array against a key defined by the user in the Api Body.
 
 Download
--------------
+--------
 
 Maven:
 ```xml
@@ -21,7 +21,7 @@ or Gradle:
 implementation 'com.noonEdu.nAnalytics:analytics:1.0.0'
 ```
 Project Setup
-----------------
+-------------
 
 **Initialize the Library**
 
@@ -53,7 +53,7 @@ There are 2 parameters to pass:
 _This method throws **WrongRequestMethodException** if the request method is not **PUT** or **POST** and **JSONException**_
 
 License
-----------
+-------
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
