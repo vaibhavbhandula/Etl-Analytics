@@ -11,10 +11,10 @@ Download
 Maven:
 ```xml
 <dependency>
-	<groupId>com.noonEdu.nAnalytics</groupId>
-	<artifactId>analytics</artifactId>
-	<version>1.0.0</version>
-	<type>pom</type>
+    <groupId>com.noonEdu.nAnalytics</groupId>
+    <artifactId>analytics</artifactId>
+    <version>1.0.0</version>
+    <type>pom</type>
 </dependency>
 ```
 or Gradle:
