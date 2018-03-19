@@ -14,13 +14,13 @@ Maven:
 <dependency>
     <groupId>com.noonEdu.nAnalytics</groupId>
     <artifactId>analytics</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <type>pom</type>
 </dependency>
 ```
 or Gradle:
 ```groovy
-implementation 'com.noonEdu.nAnalytics:analytics:1.0.1'
+implementation 'com.noonEdu.nAnalytics:analytics:1.0.2'
 ```
 Project Setup
 -------------
