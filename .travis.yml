@@ -15,9 +15,9 @@ jdk:
 before_install:
   - yes | sdkmanager "platforms;android-27"
   - yes | sdkmanager "build-tools;26.0.2"
-  - cp local.properties.ci local.properties
 
 script:
+  - cp local.properties.ci local.properties
   - ./gradlew build
 
 branches:

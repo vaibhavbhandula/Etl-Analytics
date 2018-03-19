@@ -14,7 +14,6 @@ public class LogUtils {
     public static void printLog(String tag, String message) {
         if (isLogEnabled) {
             Log.v(tag, message);
-
         }
     }
 
