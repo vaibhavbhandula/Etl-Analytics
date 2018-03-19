@@ -17,7 +17,7 @@ before_install:
   - yes | sdkmanager "build-tools;26.0.2"
 
 script:
-  - cp local.properties.ci local.properties
+  - cp local.properties.ci.properties local.properties
   - ./gradlew build
 
 branches:
