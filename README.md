@@ -1,7 +1,7 @@
-[![Download](https://api.bintray.com/packages/vaibhavbhandula/Maven/Etl-Analytics/images/download.svg) ](https://bintray.com/vaibhavbhandula/Maven/Etl-Analytics/_latestVersion)
-
 Etl-Android
 ===========
+[![Download](https://api.bintray.com/packages/vaibhavbhandula/Maven/Etl-Analytics/images/download.svg) ](https://bintray.com/vaibhavbhandula/Maven/Etl-Analytics/_latestVersion) [![License](http://img.shields.io/:license-apache-blue.svg)](LICENSE)
+
 Data Capturing Library for Android.
 
 This can be helpful in sending real time events. This Library send a JSON Array against a key defined by the user in the Api Body.
