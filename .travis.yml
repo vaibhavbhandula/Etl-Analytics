@@ -12,6 +12,9 @@ android:
 jdk:
   - oraclejdk8
 
+before_install:
+  - yes | sdkmanager --licenses
+
 script:
   - ./gradlew build
 
