@@ -13,6 +13,9 @@ jdk:
   - oraclejdk8
 
 before_install:
+  - echo $PATH
+  - echo $ANDROID_HOME
+  - echo pwd
   - yes | sdkmanager --licenses
 
 script:
