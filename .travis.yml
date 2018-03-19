@@ -13,9 +13,7 @@ jdk:
   - oraclejdk8
 
 before_install:
-  - cd $ANDROID_HOME
-  - cd tools/bin
-  - yes | ./sdkmanager --licenses
+  - yes | sdkmanager "platform;android-27"
 
 script:
   - ./gradlew build
