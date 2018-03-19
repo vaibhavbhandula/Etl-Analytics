@@ -7,13 +7,13 @@ android:
     - build-tools-27.0.3                # Build tools version
     - android-27                        # Target SDK version
     - extra-android-m2repository        # Support repo
-    - sys-img-armeabi-v7a-android-18    # Emulator
+    - extra-google-m2repository         # Google repo
 
 jdk:
   - oraclejdk8
 
 before_install:
-  - yes | sdkmanager "platform;android-27"
+  - yes | sdkmanager --licenses
 
 script:
   - ./gradlew build
