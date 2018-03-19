@@ -30,8 +30,14 @@ import retrofit2.Response;
 
 public class NAnalytics {
 
+    /**
+     * TAG for Logging
+     */
     private static final String TAG = NAnalytics.class.getSimpleName();
 
+    /**
+     * Enum for Request Type
+     */
     public enum RequestType {
         POST,
         PUT
@@ -43,6 +49,14 @@ public class NAnalytics {
     private static RequestType type;
     private static String url = "";
 
+    /**
+     * Initialize the Library
+     *
+     * @param context Application Context
+     * @param type    Request Type PUT or POST
+     * @param url     Url to make request
+     * @throws UrlEmptyException if url is empty
+     */
     public static void initialize(Context context, String url, RequestType type) throws UrlEmptyException {
         if (TextUtils.isEmpty(url)) {
             throw new UrlEmptyException("Url Empty!");
@@ -52,6 +66,9 @@ public class NAnalytics {
         NAnalytics.url = url;
     }
 
+    /**
+     * @return current instance
+     */
     public static NAnalytics getInstance() {
         if (nAnalytics == null) {
             nAnalytics = new NAnalytics();
@@ -63,6 +80,14 @@ public class NAnalytics {
         return contextWeakReference.get();
     }
 
+    /**
+     * Method used for sending the event to your server
+     *
+     * @param key      Key on which array of records will be sent in api
+     * @param jsonData JsonObject to send in String format
+     * @throws WrongRequestMethodException Exception thrown if request method is not PUT or POST
+     * @throws JSONException               JsonException
+     */
     public void logEvent(String key, String jsonData) throws WrongRequestMethodException, JSONException {
         if (key == null || key.isEmpty() || jsonData == null || jsonData.isEmpty()) {
             return;
@@ -70,6 +95,9 @@ public class NAnalytics {
         sendEventToServer(key, jsonData);
     }
 
+    /**
+     * This method is used for Testing internally. Do NOT use in code.
+     */
     public void logTestEvent(String event) {
         if (event == null || event.isEmpty()) {
             return;
@@ -77,6 +105,14 @@ public class NAnalytics {
         sendTestEventToServer(event);
     }
 
+    /**
+     * private Method used for sending the event to your server
+     *
+     * @param key      Key on which array of records will be sent in api
+     * @param jsonData JsonObject to send in String format
+     * @throws WrongRequestMethodException Exception thrown if request method is not PUT or POST
+     * @throws JSONException               JsonException
+     */
     private void sendEventToServer(String key, String jsonData) throws WrongRequestMethodException, JSONException {
         LogUtils.printLog(TAG, "sendEventToServer");
         EventDatabase eventDatabase = EventDatabase.getInstance(getContext());
@@ -105,6 +141,9 @@ public class NAnalytics {
         }
     }
 
+    /**
+     * Test Method used for internal testing
+     */
     private void sendTestEventToServer(String jsonData) {
         LogUtils.printLog(TAG, "sendTestEventToServer");
         EventDatabase eventDatabase = EventDatabase.getInstance(getContext());
@@ -129,6 +168,13 @@ public class NAnalytics {
         }
     }
 
+    /**
+     * Method used for sending the the POST Event to your server in case DB is Empty
+     *
+     * @param key      Key on which array of records will be sent in api
+     * @param jsonData JsonObject to send in String format
+     * @throws JSONException JsonException
+     */
     private void sendPostCallDbEmpty(String key, final String jsonData) throws JSONException {
         JSONArray array = new JSONArray();
         array.put(jsonData);
@@ -153,6 +199,14 @@ public class NAnalytics {
         });
     }
 
+    /**
+     * Method used for sending the the POST Event to your server in case DB is not Empty
+     *
+     * @param key      Key on which array of records will be sent in api
+     * @param jsonData JsonObject to send in String format
+     * @param events   List of Events stored in DB
+     * @throws JSONException JsonException
+     */
     private void sendPostCallDbNotEmpty(String key, final String jsonData, final List<Event> events)
             throws JSONException {
         JSONArray array = new JSONArray();
@@ -182,6 +236,13 @@ public class NAnalytics {
         });
     }
 
+    /**
+     * Method used for sending the the PUT Event to your server in case DB is Empty
+     *
+     * @param key      Key on which array of records will be sent in api
+     * @param jsonData JsonObject to send in String format
+     * @throws JSONException JsonException
+     */
     private void sendPutCallDbEmpty(String key, final String jsonData) throws JSONException {
         JSONArray array = new JSONArray();
         array.put(jsonData);
@@ -206,6 +267,14 @@ public class NAnalytics {
         });
     }
 
+    /**
+     * Method used for sending the the PUT Event to your server in case DB is not Empty
+     *
+     * @param key      Key on which array of records will be sent in api
+     * @param jsonData JsonObject to send in String format
+     * @param events   List of Events stored in DB
+     * @throws JSONException JsonException
+     */
     private void sendPutCallDbNotEmpty(String key, final String jsonData, final List<Event> events)
             throws JSONException {
         JSONArray array = new JSONArray();
@@ -235,6 +304,11 @@ public class NAnalytics {
         });
     }
 
+    /**
+     * Method used for inserting an event to DB
+     *
+     * @param event Event String
+     */
     private void apiFailDbEmpty(String event) {
         if (event == null || event.isEmpty()) {
             return;
@@ -245,6 +319,11 @@ public class NAnalytics {
         LogUtils.printLog(TAG, "apiFailDbEmpty");
     }
 
+    /**
+     * Method used for inserting events to DB
+     *
+     * @param eventList List of Events
+     */
     private void apiFailDbNotEmpty(List<Event> eventList) {
         if (eventList == null || eventList.isEmpty()) {
             return;
