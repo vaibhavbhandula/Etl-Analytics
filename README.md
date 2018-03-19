@@ -1,6 +1,6 @@
 Etl-Android
 ===========
-[![Download](https://api.bintray.com/packages/vaibhavbhandula/Maven/Etl-Analytics/images/download.svg) ](https://bintray.com/vaibhavbhandula/Maven/Etl-Analytics/_latestVersion) [![License](http://img.shields.io/:license-apache-blue.svg)](LICENSE)
+[![Download](https://api.bintray.com/packages/vaibhavbhandula/Maven/Etl-Analytics/images/download.svg) ](https://bintray.com/vaibhavbhandula/Maven/Etl-Analytics/_latestVersion) [![License](http://img.shields.io/:license-apache-blue.svg)](LICENSE) [![Build Status](https://travis-ci.org/vaibhavbhandula/Etl-Analytics.svg?branch=master)](https://travis-ci.org/vaibhavbhandula/Etl-Analytics)
 
 Data Capturing Library for Android.
 
